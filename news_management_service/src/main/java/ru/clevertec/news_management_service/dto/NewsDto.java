@@ -6,7 +6,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -18,6 +17,5 @@ public class NewsDto {
     private LocalDateTime time;
     private String title;
     private String text;
-    private List<CommentDto> comments;
 
 }
