@@ -1,0 +1,12 @@
+server:
+  port: 8080
+
+spring:
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/news_management_service?ApplicationName=TestSweetApp
+    username: postgres
+    password: 12378
+  liquibase:
+    change-log: db.changelog-master.yaml
+    enabled: false
