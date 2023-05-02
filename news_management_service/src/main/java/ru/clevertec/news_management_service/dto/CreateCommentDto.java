@@ -17,5 +17,4 @@ public class CreateCommentDto {
 
     @NotBlank(message = "Username cannot be null")
     private String username;
-    private long newsId;
 }

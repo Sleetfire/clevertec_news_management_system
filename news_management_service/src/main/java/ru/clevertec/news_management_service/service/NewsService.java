@@ -21,4 +21,8 @@ public interface NewsService {
 
     void deleteById(long id);
 
+    List<NewsDto> findAllByWordParts(String wordParts);
+
+    PageDto<NewsDto> findPageByWordParts(String wordParts, Pageable pageable);
+
 }

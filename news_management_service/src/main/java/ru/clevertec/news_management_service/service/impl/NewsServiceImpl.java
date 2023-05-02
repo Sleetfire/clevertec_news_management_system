@@ -63,19 +63,7 @@ public class NewsServiceImpl implements NewsService {
     @Override
     public PageDto<NewsDto> findPage(Pageable pageable) {
         Page<News> page = newsRepository.findAll(pageable);
-        if (page.isEmpty()) {
-            throw new EntityNotFoundException();
-        }
-        return PageDto.Builder.createBuilder(NewsDto.class)
-                .setNumber(page.getNumber())
-                .setSize(page.getSize())
-                .setTotalPages(page.getTotalPages())
-                .setTotalElements(page.getTotalElements())
-                .setFirst(page.isFirst())
-                .setNumberOfElements(page.getNumberOfElements())
-                .setLast(page.isLast())
-                .setContent(newsMapper.toDto(page.getContent()))
-                .build();
+        return convertPage(page);
     }
 
     @Override
@@ -90,11 +78,11 @@ public class NewsServiceImpl implements NewsService {
         String updatedTitle = updatedNews.getTitle();
         String updatedText = updatedNews.getText();
 
-        if (Objects.equals(updatedTitle, newsFromDb.getTitle())) {
+        if (!Objects.equals(updatedTitle, newsFromDb.getTitle())) {
             newsFromDb.setText(updatedTitle);
         }
 
-        if (Objects.equals(updatedText, newsFromDb.getText())) {
+        if (!Objects.equals(updatedText, newsFromDb.getText())) {
             newsFromDb.setText(updatedText);
         }
 
@@ -112,5 +100,38 @@ public class NewsServiceImpl implements NewsService {
         }
 
         newsRepository.deleteById(id);
+    }
+
+    @Override
+    public List<NewsDto> findAllByWordParts(String wordParts) {
+        String findWord = "%" + wordParts + "%";
+        List<News> newsList = newsRepository.findAllByWordParts(findWord);
+        if (newsList.isEmpty()) {
+            throw new EntityNotFoundException();
+        }
+        return newsMapper.toDto(newsList);
+    }
+
+    @Override
+    public PageDto<NewsDto> findPageByWordParts(String wordParts, Pageable pageable) {
+        String findWord = "%" + wordParts + "%";
+        Page<News> page = newsRepository.findAllByWordParts(findWord, pageable);
+        return convertPage(page);
+    }
+
+    private PageDto<NewsDto> convertPage(Page<News> page) {
+        if (page.isEmpty()) {
+            throw new EntityNotFoundException();
+        }
+        return PageDto.Builder.createBuilder(NewsDto.class)
+                .setNumber(page.getNumber())
+                .setSize(page.getSize())
+                .setTotalPages(page.getTotalPages())
+                .setTotalElements(page.getTotalElements())
+                .setFirst(page.isFirst())
+                .setNumberOfElements(page.getNumberOfElements())
+                .setLast(page.isLast())
+                .setContent(newsMapper.toDto(page.getContent()))
+                .build();
     }
 }

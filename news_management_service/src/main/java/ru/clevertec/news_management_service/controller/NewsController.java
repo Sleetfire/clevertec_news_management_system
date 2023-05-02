@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.clevertec.news_management_service.dto.CreateNewsDto;
 import ru.clevertec.news_management_service.dto.NewsDto;
 import ru.clevertec.news_management_service.dto.PageDto;
+import ru.clevertec.news_management_service.exception.IllegalRequestParamException;
 import ru.clevertec.news_management_service.service.NewsService;
 
 import java.util.List;
@@ -45,10 +46,10 @@ public class NewsController {
     public ResponseEntity<PageDto<NewsDto>> findPage(@RequestParam(defaultValue = "0", required = false) int page,
                                                      @RequestParam(defaultValue = "1", required = false) int size) {
         if (page < 0) {
-            throw new RuntimeException();
+            throw new IllegalRequestParamException();
         }
         if (size < 1) {
-            throw new RuntimeException();
+            throw new IllegalRequestParamException();
         }
         Pageable pageable = PageRequest.of(page, size);
 
@@ -67,5 +68,23 @@ public class NewsController {
         newsService.deleteById(id);
     }
 
+    @GetMapping(value = "/search", produces = {MediaType.APPLICATION_JSON_VALUE})
+    public ResponseEntity<List<NewsDto>> findAllByWordParts(@RequestParam(required = false) String wordParts) {
+        return new ResponseEntity<>(newsService.findAllByWordParts(wordParts), HttpStatus.OK);
+    }
+
+    @GetMapping(value = "/search/page", produces = {MediaType.APPLICATION_JSON_VALUE})
+    public ResponseEntity<PageDto<NewsDto>> findPageByWordParts(@RequestParam(required = false) String wordParts,
+                                                                @RequestParam(defaultValue = "0", required = false) int page,
+                                                                @RequestParam(defaultValue = "1", required = false) int size) {
+        if (page < 0) {
+            throw new IllegalRequestParamException();
+        }
+        if (size < 1) {
+            throw new IllegalRequestParamException();
+        }
+        Pageable pageable = PageRequest.of(page, size);
+        return new ResponseEntity<>(newsService.findPageByWordParts(wordParts, pageable), HttpStatus.OK);
+    }
 
 }

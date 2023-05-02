@@ -9,7 +9,7 @@ import java.util.List;
 
 public interface CommentService {
 
-    CommentDto create(CreateCommentDto comment);
+    CommentDto create(long newsId, CreateCommentDto comment);
 
     CommentDto findById(long id);
 
@@ -20,5 +20,9 @@ public interface CommentService {
     CommentDto update(long id, CreateCommentDto updatedComment);
 
     void deleteById(long id);
+
+    List<CommentDto> findAllByNewsId(long id);
+
+    void deleteAllByNewsId(long newsId);
 
 }
