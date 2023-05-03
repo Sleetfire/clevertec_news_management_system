@@ -25,4 +25,8 @@ public interface CommentService {
 
     void deleteAllByNewsId(long newsId);
 
+    List<CommentDto> findAllByWordParts(String wordParts);
+
+    PageDto<CommentDto> findPageByWordParts(String wordParts, Pageable pageable);
+
 }
