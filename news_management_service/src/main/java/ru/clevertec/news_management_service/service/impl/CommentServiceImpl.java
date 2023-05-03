@@ -67,19 +67,7 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public PageDto<CommentDto> findPageByNewsId(long newsId, Pageable pageable) {
         Page<Comment> page = commentRepository.findAllByNewsId(newsId, pageable);
-        if (page.isEmpty()) {
-            throw new EntityNotFoundException();
-        }
-        return PageDto.Builder.createBuilder(CommentDto.class)
-                .setNumber(page.getNumber())
-                .setSize(page.getSize())
-                .setTotalPages(page.getTotalPages())
-                .setTotalElements(page.getTotalElements())
-                .setFirst(page.isFirst())
-                .setNumberOfElements(page.getNumberOfElements())
-                .setLast(page.isLast())
-                .setContent(commentMapper.toDto(page.getContent()))
-                .build();
+        return convertPage(page);
     }
 
     @Override
@@ -124,5 +112,35 @@ public class CommentServiceImpl implements CommentService {
     @Transactional
     public void deleteAllByNewsId(long newsId) {
         commentRepository.deleteAllByNewsId(newsId);
+    }
+
+    @Override
+    public List<CommentDto> findAllByWordParts(String wordParts) {
+        String findQuery = "%" + wordParts + "%";
+        List<Comment> commentList = commentRepository.findAllByWordParts(findQuery);
+        return commentMapper.toDto(commentList);
+    }
+
+    @Override
+    public PageDto<CommentDto> findPageByWordParts(String wordParts, Pageable pageable) {
+        String findQuery = "%" + wordParts + "%";
+        Page<Comment> page = commentRepository.findAllByWordParts(findQuery, pageable);
+        return convertPage(page);
+    }
+
+    private PageDto<CommentDto> convertPage(Page<Comment> page) {
+        if (page.isEmpty()) {
+            throw new EntityNotFoundException();
+        }
+        return PageDto.Builder.createBuilder(CommentDto.class)
+                .setNumber(page.getNumber())
+                .setSize(page.getSize())
+                .setTotalPages(page.getTotalPages())
+                .setTotalElements(page.getTotalElements())
+                .setFirst(page.isFirst())
+                .setNumberOfElements(page.getNumberOfElements())
+                .setLast(page.isLast())
+                .setContent(commentMapper.toDto(page.getContent()))
+                .build();
     }
 }
