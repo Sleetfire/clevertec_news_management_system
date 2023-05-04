@@ -106,9 +106,6 @@ public class NewsServiceImpl implements NewsService {
     public List<NewsDto> findAllByWordParts(String wordParts) {
         String findWord = "%" + wordParts + "%";
         List<News> newsList = newsRepository.findAllByWordParts(findWord);
-        if (newsList.isEmpty()) {
-            throw new EntityNotFoundException();
-        }
         return newsMapper.toDto(newsList);
     }
 

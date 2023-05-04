@@ -1,6 +1,5 @@
 package ru.clevertec.news_management_service.service.impl;
 
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,7 +13,6 @@ import ru.clevertec.news_management_service.service.FullTextSearchService;
 import ru.clevertec.news_management_service.service.NewsService;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -47,7 +45,12 @@ public class FullTextSearchServiceImpl implements FullTextSearchService {
 
         newsIdSetFromComments.forEach(id -> {
             NewsDto newsDto = newsServiceImpl.findById(id);
-            List<CommentDto> comments = commentServiceImpl.findAllByNewsId(id);
+            List<CommentDto> comments;
+            try {
+                comments = commentServiceImpl.findAllByNewsId(id);
+            } catch (EntityNotFoundException e) {
+                comments = new ArrayList<>();
+            }
             result.add(NewsCommentsDtoWrapper.of(newsDto, comments));
         });
 
@@ -60,12 +63,20 @@ public class FullTextSearchServiceImpl implements FullTextSearchService {
 
     @Override
     public List<NewsDto> findNewsList(String text) {
-        return newsServiceImpl.findAllByWordParts(text);
+        List<NewsDto> newsDtoList = newsServiceImpl.findAllByWordParts(text);
+        if(newsDtoList.isEmpty()) {
+            throw new EntityNotFoundException();
+        }
+        return newsDtoList;
     }
 
     @Override
     public List<CommentDto> findCommentList(String text) {
-        return commentServiceImpl.findAllByWordParts(text);
+        List<CommentDto> commentDtoList = commentServiceImpl.findAllByWordParts(text);
+        if (commentDtoList.isEmpty()) {
+            throw new EntityNotFoundException();
+        }
+        return commentDtoList;
     }
 
     @Override

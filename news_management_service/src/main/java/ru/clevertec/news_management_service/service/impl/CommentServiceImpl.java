@@ -20,7 +20,7 @@ import java.util.Objects;
 import java.util.Optional;
 
 @Service
-@Transactional(readOnly = true)
+@Transactional(readOnly = true, noRollbackForClassName = {"ru.clevertec.news_management_service.exception.EntityNotFoundException"})
 public class CommentServiceImpl implements CommentService {
 
     private final CommentRepository commentRepository;
