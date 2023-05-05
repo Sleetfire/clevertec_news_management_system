@@ -25,12 +25,12 @@ public class CommentServiceImpl implements CommentService {
 
     private final CommentRepository commentRepository;
     private final CommentMapper commentMapper;
-    private final NewsService newsService;
+    private final NewsService newsServiceImpl;
 
-    public CommentServiceImpl(CommentRepository commentRepository, CommentMapper commentMapper, NewsService newsService) {
+    public CommentServiceImpl(CommentRepository commentRepository, CommentMapper commentMapper, NewsService newsServiceImpl) {
         this.commentRepository = commentRepository;
         this.commentMapper = commentMapper;
-        this.newsService = newsService;
+        this.newsServiceImpl = newsServiceImpl;
     }
 
     @Override
@@ -40,7 +40,7 @@ public class CommentServiceImpl implements CommentService {
                 .time(LocalDateTime.now())
                 .text(comment.getText())
                 .username(comment.getUsername())
-                .news(newsService.findById(newsId))
+                .news(newsServiceImpl.findById(newsId))
                 .build();
         Comment createdComment = commentRepository.save(commentMapper.toEntity(commentDto));
         return commentMapper.toDto(createdComment);

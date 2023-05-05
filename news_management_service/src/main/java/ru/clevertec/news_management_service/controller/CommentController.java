@@ -1,6 +1,5 @@
 package ru.clevertec.news_management_service.controller;
 
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -9,10 +8,11 @@ import org.springframework.web.bind.annotation.*;
 import ru.clevertec.news_management_service.dto.CommentDto;
 import ru.clevertec.news_management_service.dto.CreateCommentDto;
 import ru.clevertec.news_management_service.dto.PageDto;
-import ru.clevertec.news_management_service.exception.IllegalRequestParamException;
 import ru.clevertec.news_management_service.service.CommentService;
 
 import java.util.List;
+
+import static ru.clevertec.news_management_service.controller.util.ControllerUtil.*;
 
 @RestController
 @RequestMapping("/news")
@@ -50,13 +50,8 @@ public class CommentController {
     public ResponseEntity<PageDto<CommentDto>> findPageByNewsId(@PathVariable long newsId,
                                                                 @RequestParam(defaultValue = "0", required = false) int page,
                                                                 @RequestParam(defaultValue = "1", required = false) int size) {
-        if (page < 0) {
-            throw new IllegalRequestParamException();
-        }
-        if (size < 1) {
-            throw new IllegalRequestParamException();
-        }
-        Pageable pageable = PageRequest.of(page, size);
+
+        Pageable pageable = getPageable(page, size);
         return new ResponseEntity<>(commentService.findPageByNewsId(newsId, pageable), HttpStatus.OK);
     }
 
