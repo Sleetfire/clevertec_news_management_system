@@ -4,6 +4,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.clevertec.news_management_service.aop.annotation.Loggable;
 import ru.clevertec.news_management_service.dto.CreateNewsDto;
 import ru.clevertec.news_management_service.dto.NewsDto;
 import ru.clevertec.news_management_service.dto.PageDto;
@@ -31,6 +32,7 @@ public class NewsServiceImpl implements NewsService {
     }
 
     @Override
+    @Loggable
     @Transactional
     public NewsDto create(CreateNewsDto news) {
         NewsDto newsDto = NewsDto.builder()
@@ -67,6 +69,7 @@ public class NewsServiceImpl implements NewsService {
     }
 
     @Override
+    @Loggable
     @Transactional
     public NewsDto update(long id, CreateNewsDto updatedNews) {
         Optional<News> newsOptional = newsRepository.findById(id);
@@ -79,7 +82,7 @@ public class NewsServiceImpl implements NewsService {
         String updatedText = updatedNews.getText();
 
         if (!Objects.equals(updatedTitle, newsFromDb.getTitle())) {
-            newsFromDb.setText(updatedTitle);
+            newsFromDb.setTitle(updatedTitle);
         }
 
         if (!Objects.equals(updatedText, newsFromDb.getText())) {
@@ -92,6 +95,7 @@ public class NewsServiceImpl implements NewsService {
     }
 
     @Override
+    @Loggable
     @Transactional
     public void deleteById(long id) {
         Optional<News> optionalNews = newsRepository.findById(id);

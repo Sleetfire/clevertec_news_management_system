@@ -4,6 +4,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.clevertec.news_management_service.aop.annotation.Loggable;
 import ru.clevertec.news_management_service.dto.CommentDto;
 import ru.clevertec.news_management_service.dto.CreateCommentDto;
 import ru.clevertec.news_management_service.dto.PageDto;
@@ -34,6 +35,7 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
+    @Loggable
     @Transactional
     public CommentDto create(long newsId, CreateCommentDto comment) {
         CommentDto commentDto = CommentDto.builder()
@@ -71,6 +73,7 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
+    @Loggable
     @Transactional
     public CommentDto update(long id, CreateCommentDto updatedComment) {
         Optional<Comment> optionalComment = commentRepository.findById(id);
@@ -90,6 +93,7 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
+    @Loggable
     @Transactional
     public void deleteById(long id) {
         Optional<Comment> optionalComment = commentRepository.findById(id);
@@ -109,6 +113,7 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
+    @Loggable
     @Transactional
     public void deleteAllByNewsId(long newsId) {
         commentRepository.deleteAllByNewsId(newsId);
