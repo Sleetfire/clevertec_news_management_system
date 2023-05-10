@@ -1,0 +1,13 @@
+spring:
+  datasource:
+    password: test
+    username: test
+  jpa:
+    show-sql: true
+  liquibase:
+    enabled: true
+    change-log: db/changelog/db.changelog-master.yaml
+
+cache:
+  type: LFU #LRU
+  capacity: 8
