@@ -20,7 +20,6 @@ import ru.clevertec.news_management_service.repository.NewsRepository;
 import ru.clevertec.news_management_service.repository.entity.News;
 import ru.clevertec.news_management_service.service.impl.NewsServiceImpl;
 import ru.clevertec.news_management_service.testbuilder.CreateNewsDtoBuilder;
-import ru.clevertec.news_management_service.testbuilder.NewsDtoBuilder;
 
 import java.util.Collections;
 import java.util.List;
@@ -147,16 +146,11 @@ class NewsServiceImplTest {
 
     @Test
     void checkUpdateShouldReturnCallTestedMethod() {
-        NewsDto expectedNewsDto = new NewsDtoBuilder()
-                .withTitle("updated-title")
-                .withText("updated-text")
-                .build();
         CreateNewsDto updated = new CreateNewsDtoBuilder()
                 .withTitle("updated-title")
                 .withText("updated-text")
                 .build();
         News news = newsMapper.toEntity(NEWS_DTO);
-        News updatedNews = newsMapper.toEntity(expectedNewsDto);
         Optional<News> optionalNews = Optional.of(news);
         long id = 1L;
 
@@ -217,10 +211,60 @@ class NewsServiceImplTest {
     }
 
     @Test
-    void findAllByWordParts() {
+    void checkFindAllByWordPartsShouldReturnListOfNewsDto() {
+        List<NewsDto> expectedDtoList = getNewsDtoList(3);
+        List<News> newsList = newsMapper.toEntity(expectedDtoList);
+        String wordPart = "default";
+        String searchWordPart = "%" + wordPart + "%";
+
+        doReturn(newsList)
+                .when(newsRepository)
+                .findAllByWordParts(searchWordPart);
+
+        List<NewsDto> actualNewsDtoList = newsServiceImpl.findAllByWordParts(wordPart);
+
+        assertThat(actualNewsDtoList)
+                .hasSameElementsAs(expectedDtoList);
     }
 
     @Test
-    void findPageByWordParts() {
+    void checkFindAllByWordsPartShouldReturnEmptyList() {
+        String wordPart = "default";
+        String searchWordPart = "%" + wordPart + "%";
+
+        doReturn(Collections.emptyList())
+                .when(newsRepository)
+                .findAllByWordParts(searchWordPart);
+
+        List<NewsDto> actualNewsDtoList = newsServiceImpl.findAllByWordParts(wordPart);
+
+        assertThat(actualNewsDtoList)
+                .isEmpty();
     }
+
+    @Test
+    void checkFindPageByWordPartsShouldReturn() {
+        List<NewsDto> newsDtoList = getNewsDtoList(3);
+        List<News> content = newsMapper.toEntity(newsDtoList);
+        Pageable pageable = PageRequest.of(0, 1);
+        Page<News> page = new PageImpl<>(content, pageable, content.size());
+        String wordPart = "default";
+        String searchWordPart = "%" + wordPart + "%";
+
+        doReturn(page)
+                .when(newsRepository)
+                .findAllByWordParts(searchWordPart, pageable);
+
+        PageDto<NewsDto> actualPageDto = newsServiceImpl.findPageByWordParts(wordPart, pageable);
+
+        assertThat(actualPageDto.getNumber()).isZero();
+        assertThat(actualPageDto.getSize()).isEqualTo(1);
+        assertThat(actualPageDto.getTotalPages()).isEqualTo(3);
+        assertThat(actualPageDto.getTotalElements()).isEqualTo(3L);
+        assertThat(actualPageDto.isFirst()).isTrue();
+        assertThat(actualPageDto.getNumberOfElements()).isEqualTo(3);
+        assertThat(actualPageDto.isLast()).isFalse();
+        assertThat(actualPageDto.getContent()).hasSameElementsAs(newsDtoList);
+    }
+
 }
