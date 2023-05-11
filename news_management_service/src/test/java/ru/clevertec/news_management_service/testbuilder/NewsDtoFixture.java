@@ -14,7 +14,7 @@ public class NewsDtoFixture {
         List<NewsDto> newsDtoList = new ArrayList<>();
         for (int i = 0; i < newsCount; i++) {
             NewsDto newsDto = new NewsDtoBuilder()
-                    .withId(i)
+                    .withId(i + 1)
                     .build();
             newsDtoList.add(newsDto);
         }
