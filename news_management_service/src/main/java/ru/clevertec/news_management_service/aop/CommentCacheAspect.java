@@ -8,6 +8,7 @@ import ru.clevertec.news_management_service.dto.CommentDto;
 import ru.clevertec.news_management_service.service.Cache;
 import ru.clevertec.news_management_service.service.CacheFactory;
 
+import java.util.Objects;
 import java.util.Optional;
 
 @Aspect
@@ -43,8 +44,10 @@ public class CommentCacheAspect {
     @AfterReturning(pointcut = "addCommentMethod() || updateCommentMethod()", returning = "retVal")
     public Object addOrUpdateCommentToCache(Object retVal) {
         CommentDto commentDto = (CommentDto) retVal;
-        long id = commentDto.getId();
-        commentCache.add(id, commentDto);
+        if (Objects.nonNull(commentDto)) {
+            long id = commentDto.getId();
+            commentCache.add(id, commentDto);
+        }
         return commentDto;
     }
 

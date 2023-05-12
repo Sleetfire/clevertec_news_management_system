@@ -8,6 +8,7 @@ import ru.clevertec.news_management_service.dto.NewsDto;
 import ru.clevertec.news_management_service.service.Cache;
 import ru.clevertec.news_management_service.service.CacheFactory;
 
+import java.util.Objects;
 import java.util.Optional;
 
 @Aspect
@@ -43,8 +44,10 @@ public class NewsCacheAspect {
     @AfterReturning(pointcut = "addNewsMethod() || updateNewsMethod()", returning = "retVal")
     public Object addOrUpdateNewsToCache(Object retVal) {
         NewsDto newsDto = (NewsDto) retVal;
-        long id = newsDto.getId();
-        newsCache.add(id, newsDto);
+        if (Objects.nonNull(newsDto)) {
+            long id = newsDto.getId();
+            newsCache.add(id, newsDto);
+        }
         return newsDto;
     }
 
