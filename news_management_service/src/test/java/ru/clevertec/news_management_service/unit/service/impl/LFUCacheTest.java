@@ -10,7 +10,7 @@ import ru.clevertec.news_management_service.service.impl.LFUCache;
 
 import java.util.Optional;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 class LFUCacheTest {
 
