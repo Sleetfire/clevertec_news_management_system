@@ -1,0 +1,23 @@
+version: "3.5"
+services:
+  db:
+    build: postgresql
+    image: news_management_postgresql:1.0.0
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 12378
+    ports:
+      - "5432:5432"
+  pgadmin:
+    build: pgadmin
+    image: news_management_pgadmin:1.0.0
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: barkovskiy2000@gmail.com
+      PGADMIN_DEFAULT_PASSWORD: root
+    ports:
+      - "82:80"
+  news-management-service:
+    build: news-management-service
+    image: news_management_service:1.0.0
