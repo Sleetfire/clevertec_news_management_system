@@ -25,9 +25,13 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-import static org.assertj.core.api.Assertions.*;
-import static org.mockito.Mockito.*;
-import static ru.clevertec.news_management_service.testbuilder.NewsDtoFixture.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.verify;
+import static ru.clevertec.news_management_service.testbuilder.NewsDtoFixture.NEWS_DTO;
+import static ru.clevertec.news_management_service.testbuilder.NewsDtoFixture.getNewsDtoList;
 
 @SpringBootTest
 @ExtendWith(MockitoExtension.class)
@@ -121,14 +125,10 @@ class NewsServiceImplTest {
 
         PageDto<NewsDto> actualPageDto = newsServiceImpl.findPage(pageable);
 
-        assertThat(actualPageDto.getNumber()).isZero();
-        assertThat(actualPageDto.getSize()).isEqualTo(1);
-        assertThat(actualPageDto.getTotalPages()).isEqualTo(3);
-        assertThat(actualPageDto.getTotalElements()).isEqualTo(3L);
-        assertThat(actualPageDto.isFirst()).isTrue();
-        assertThat(actualPageDto.getNumberOfElements()).isEqualTo(3);
-        assertThat(actualPageDto.isLast()).isFalse();
-        assertThat(actualPageDto.getContent()).hasSameElementsAs(newsDtoList);
+        assertThat(actualPageDto)
+                .extracting(PageDto::getNumber, PageDto::getSize, PageDto::getTotalPages, PageDto::getNumberOfElements,
+                        PageDto::isFirst, PageDto::getNumberOfElements, PageDto::isLast, PageDto::getContent)
+                .containsExactly(0, 1, 3, 3, true, 3, false, newsDtoList);
     }
 
     @Test
@@ -187,9 +187,6 @@ class NewsServiceImplTest {
         doReturn(optionalNews)
                 .when(newsRepository)
                 .findById(id);
-        doNothing()
-                .when(newsRepository)
-                .deleteById(id);
 
         newsServiceImpl.deleteById(id);
 
@@ -243,7 +240,7 @@ class NewsServiceImplTest {
     }
 
     @Test
-    void checkFindPageByWordPartsShouldReturn() {
+    void checkFindPageByWordPartsShouldReturnPageDto() {
         List<NewsDto> newsDtoList = getNewsDtoList(3);
         List<News> content = newsMapper.toEntity(newsDtoList);
         Pageable pageable = PageRequest.of(0, 1);
@@ -257,14 +254,10 @@ class NewsServiceImplTest {
 
         PageDto<NewsDto> actualPageDto = newsServiceImpl.findPageByWordParts(wordPart, pageable);
 
-        assertThat(actualPageDto.getNumber()).isZero();
-        assertThat(actualPageDto.getSize()).isEqualTo(1);
-        assertThat(actualPageDto.getTotalPages()).isEqualTo(3);
-        assertThat(actualPageDto.getTotalElements()).isEqualTo(3L);
-        assertThat(actualPageDto.isFirst()).isTrue();
-        assertThat(actualPageDto.getNumberOfElements()).isEqualTo(3);
-        assertThat(actualPageDto.isLast()).isFalse();
-        assertThat(actualPageDto.getContent()).hasSameElementsAs(newsDtoList);
+        assertThat(actualPageDto)
+                .extracting(PageDto::getNumber, PageDto::getSize, PageDto::getTotalPages, PageDto::getNumberOfElements,
+                        PageDto::isFirst, PageDto::getNumberOfElements, PageDto::isLast, PageDto::getContent)
+                .containsExactly(0, 1, 3, 3, true, 3, false, newsDtoList);
     }
 
 }
