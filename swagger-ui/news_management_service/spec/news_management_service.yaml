@@ -1,0 +1,635 @@
+openapi: 3.0.0
+info:
+  version: 1.0.0
+  title: Система управления новостями
+  contact:
+    name: Clevertec
+    url: http://clevertec.ru
+
+servers:
+  - url: http://{host}:{port}
+    description: custom server
+    variables:
+      host:
+        description: host name
+        default: localhost
+      port:
+        description: port value
+        default: "8080"
+
+tags:
+  - name: "Новости"
+    description: "Опубликованные новости"
+  - name: "Комментарии"
+    description: "Комментарии, оставляемые под новостями"
+
+paths:
+  /news:
+    post:
+      tags:
+        - "Новости"
+      summary: "Добавление новой новости"
+      requestBody:
+        $ref: "#/components/requestBodies/CreateNews"
+      responses:
+        '201':
+          description: "Новость создана"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/News'
+        '400':
+          $ref: '#/components/responses/Bad_Request'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '500':
+          $ref: '#/components/responses/Internal_Server_Error'
+    get:
+      tags:
+        - "Новости"
+      summary: "Получить список новостей"
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PageOfNews'
+        '400':
+          $ref: '#/components/responses/Bad_Request'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '500':
+          $ref: '#/components/responses/Internal_Server_Error'
+  /news/{id}:
+    get:
+      tags:
+        - "Новости"
+      summary: "Получить новость по идентификатору"
+      parameters:
+        - in: path
+          name: id
+          description: "Идентификатор новости"
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/News'
+        '400':
+          $ref: '#/components/responses/Bad_Request'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '500':
+          $ref: '#/components/responses/Internal_Server_Error'
+    patch:
+      tags:
+        - "Новости"
+      summary: "Обновить новость"
+      requestBody:
+        $ref: "#/components/requestBodies/CreateNews"
+      parameters:
+        - in: path
+          name: id
+          description: "Идентификатор новости"
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/News'
+        '400':
+          $ref: '#/components/responses/Bad_Request'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '500':
+          $ref: '#/components/responses/Internal_Server_Error'
+    delete:
+      tags:
+        - "Новости"
+      summary: "Удалить новость"
+      parameters:
+        - in: path
+          name: id
+          description: "Идентификатор новости"
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '204':
+          description: NO CONTENT
+        '400':
+          $ref: '#/components/responses/Bad_Request'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '500':
+          $ref: '#/components/responses/Internal_Server_Error'
+  /news/page:
+    get:
+      tags:
+        - "Новости"
+      summary: "Получение страницы новостей"
+      parameters:
+        - in: query
+          name: page
+          schema:
+            type: integer
+          description: Номер страницы
+          required: false
+        - in: query
+          name: size
+          schema:
+            type: integer
+          description: Размер страницы
+          required: false
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PageOfNews'
+        '400':
+          $ref: '#/components/responses/Bad_Request'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '500':
+          $ref: '#/components/responses/Internal_Server_Error'
+  /news/{id}/comments/wrapper:
+    get:
+      tags:
+        - "Новости"
+      summary: "Получение новости и страницы комментариев"
+      parameters:
+        - in: path
+          name: id
+          description: "Идентификатор новости"
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - in: query
+          name: page
+          schema:
+            type: integer
+          description: Номер страницы
+          required: false
+        - in: query
+          name: size
+          schema:
+            type: integer
+          description: Размер страницы
+          required: false
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NewsCommentsPageWrapper'
+        '400':
+          $ref: '#/components/responses/Bad_Request'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '500':
+          $ref: '#/components/responses/Internal_Server_Error'
+  /api/v1/account/{uuid}/dt_update/{dt_update}:
+    put:
+      tags:
+        - "Счета"
+      summary: Редактировать информацию о счёте
+      parameters:
+        - in: path
+          name: uuid
+          description: Идентификатор счёта в котором создаём операцию
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - in: path
+          name: dt_update
+          required: true
+          schema:
+            type: string
+            format: int64
+          description: Дата последнего обновления записи
+      requestBody:
+        $ref: "#/components/requestBodies/CreateAccount"
+      responses:
+        '200':
+          description: "Счёт обновлён"
+        '400':
+          $ref: '#/components/responses/Bad_Request'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '500':
+          $ref: '#/components/responses/Internal_Server_Error'
+  /api/v1/account/{uuid}/operation:
+    post:
+      tags:
+        - "Операции"
+      summary: Добавление операции по счёту
+      parameters:
+        - in: path
+          name: uuid
+          description: Идентификатор счёта в котором создаём операцию
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        $ref: "#/components/requestBodies/CreateOperation"
+      responses:
+        '201':
+          description: "Операция добавлена к счёту"
+        '400':
+          $ref: '#/components/responses/Bad_Request'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '500':
+          $ref: '#/components/responses/Internal_Server_Error'
+    get:
+      tags:
+        - "Операции"
+      summary: Получить страницу операций по счёту
+      parameters:
+        - in: path
+          name: uuid
+          description: "Идентификатор счёта по которому получаем операции"
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - in: query
+          name: page
+          schema:
+            type: integer
+          description: Номер страницы
+          required: false
+        - in: query
+          name: size
+          schema:
+            type: integer
+          description: Размер страницы
+          required: false
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PageOfOperation'
+        '400':
+          $ref: '#/components/responses/Bad_Request'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '500':
+          $ref: '#/components/responses/Internal_Server_Error'
+  /api/v1/account/{uuid}/operation/{uuid_operation}/dt_update/{dt_update}:
+    put:
+      tags:
+        - "Операции"
+      summary: Редактировать информацию об операции на счёте
+      parameters:
+        - in: path
+          name: uuid
+          description: Идентификатор счёта в котором редактируем операцию
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - in: path
+          name: uuid_operation
+          description: Идентификатор операции в котором редактируем
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - in: path
+          name: dt_update
+          required: true
+          schema:
+            type: string
+            format: int64
+          description: Дата последнего обновления записи
+      requestBody:
+        $ref: "#/components/requestBodies/CreateOperation"
+      responses:
+        '200':
+          description: "Операция изменена"
+        '400':
+          $ref: '#/components/responses/Bad_Request'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '500':
+          $ref: '#/components/responses/Internal_Server_Error'
+    delete:
+      tags:
+        - "Операции"
+      summary: Удалить операцию на счёте
+      parameters:
+        - in: path
+          name: uuid
+          description: Идентификатор счёта в котором редактируем операцию
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - in: path
+          name: uuid_operation
+          description: Идентификатор операции в котором редактируем
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - in: path
+          name: dt_update
+          required: true
+          schema:
+            type: string
+            format: int64
+          description: Дата последнего обновления записи
+      responses:
+        '200':
+          description: "Операция удалена"
+        '400':
+          $ref: '#/components/responses/Bad_Request'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '500':
+          $ref: '#/components/responses/Internal_Server_Error'
+
+components:
+  requestBodies:
+    CreateNews:
+      description: Тело для создания/обновления новости
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/CreateNews'
+    CreateComment:
+      description: Тело для создания комментария
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/CreateComment'
+
+  responses:
+    Bad_Request:
+      description: Запрос некорректен. Сервер не может обработать запрос
+      content:
+        application/json:
+          schema:
+            oneOf:
+              - type: array
+                items:
+                  $ref: '#/components/schemas/t_single_error_response'
+              - $ref: '#/components/schemas/t_multiple_error_response'
+          examples:
+            t_single_error_response:
+              value:
+                - logref: error
+                  message:  Запрос содержит некорретные данные. Измените запрос и отправьте его ещё раз
+            t_multiple_error_response:
+              value:
+                logref: structured_error
+                errors:
+                  - field: time_unit
+                    message: Поле должно быть положительным числом
+    Unauthorized:
+      description: Для выполнения запроса на данный адрес требуется передать токен авторизации
+    Forbidden:
+      description: Данному токенту авторизации запрещено выполнять запрос на данный адрес
+    Internal_Server_Error:
+      description: Внутренняя ошибка сервера. Сервер не смог корректно обработать запрос
+      content:
+        applicaion/json:
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/t_single_error_response'
+          example:
+            - logref: error
+              message:  Сервер не смог корректно обработать запрос. Пожалуйста обратитесь к администратору
+  schemas:
+    CreateNews:
+      type: object
+      description: Сущность для создания новости
+      properties:
+        title:
+          type: string
+          description: "Название новости"
+        text:
+          type: string
+          description: "Текст новости"
+    CreateComment:
+      type: object
+      description: Сущность для создания комментария
+      properties:
+        text:
+          type: string
+          description: "Текст комментария"
+        username:
+          type: string
+          description: "Имя пользователя"
+    News:
+      type: object
+      description: Новость
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: "идентификатор новости"
+        time:
+          type: string
+          format: date
+        title:
+          type: string
+          description: "Название новости"
+        text:
+          type: string
+          description: "Текст новости"
+    Comment:
+      type: object
+      description: Комментарий
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: "идентификатор комментария"
+        time:
+          type: string
+          format: date
+        text:
+          type: string
+          description: "Текст комментария"
+        username:
+          type: string
+          description: "Имя пользователя"
+        newsId:
+          type: integer
+          format: int64
+          description: "Идентификатор новости, к которой относится комментарий"
+    ListOfNews:
+      type: array
+      items:
+        $ref: '#/components/schemas/News'
+    ListOfComment:
+      type: array
+      items:
+        $ref: '#/components/schemas/Comment'
+    PageOfNews:
+      type: object
+      description: "Новости"
+      allOf:
+        - $ref: '#/components/schemas/t_page'
+      properties:
+        content:
+          type: array
+          items:
+            $ref: '#/components/schemas/News'
+
+    PageOfComments:
+      type: object
+      description: "Комментарии"
+      allOf:
+        - $ref: '#/components/schemas/t_page'
+      properties:
+        content:
+          type: array
+          items:
+            $ref: '#/components/schemas/Comment'
+    NewsCommentsWrapper:
+      type: object
+      properties:
+        news:
+          type: object
+          allOf:
+            - $ref: '#/components/schemas/News'
+        comments:
+          type: array
+          items:
+            $ref: '#/components/schemas/Comment'
+    NewsCommentsPageWrapper:
+      type: object
+      properties:
+        news:
+          type: object
+          allOf:
+            - $ref: '#/components/schemas/News'
+        comments:
+          type: object
+          allOf:
+            - $ref: '#/components/schemas/PageOfComments'
+    t_page:
+      type: object
+      required:
+        - number
+        - size
+        - total_pages
+        - total_elements
+        - content
+        - first
+        - number_of_elements
+        - last
+      description: Страница с опросами
+      properties:
+        number:
+          type: integer
+          description: Номер страницы
+        size:
+          description: Размер страницы
+          type: integer
+        total_pages:
+          description: Количество страниц
+          type: integer
+        total_elements:
+          description: Количество записей
+          type: integer
+        first:
+          description: Признак является ли элемент первым
+          type: boolean
+        number_of_elements:
+          description: Номер элемента
+          type: integer
+        last:
+          description: Признак является ли элемент последним
+          type: boolean
+
+    t_single_error_response:
+      type: object
+      description: Ошибка. Содержит общее описание ошибки
+      required:
+        - logref
+        - message
+      properties:
+        logref:
+          type: string
+          description: Тип ошибки
+          example: error
+        message:
+          description: Сообщение ошибки
+          type: string
+          example: Запрос содержит некорретные данные. Измените запрос и отправьте его ещё раз
+
+    t_multiple_error_response:
+      type: object
+      description: Ошибка. Содержит описание ошибок со ссылками на поля сущности
+      required:
+        - logref
+        - errors
+      properties:
+        logref:
+          type: string
+          description: Тип ошибки
+        errors:
+          description: Наименование ошибочного поля
+          type: array
+          items:
+            type: object
+            properties:
+              message:
+                type: string
+                description: Сообщение об ошибке
+                example: Поле должно быть положительным числом
+              field:
+                type: string
+                description: Наименование ошибочного поля
+                example: time_unit

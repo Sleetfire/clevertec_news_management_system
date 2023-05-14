@@ -34,6 +34,14 @@ services:
     networks:
       - my_net
 
+  swagger-ui:
+    build: swagger-ui
+    image: news_management_service:1.0.0
+    ports:
+      - "81:8080"
+    networks:
+      - my_net
+
 networks:
   my_net:
     name: my_net
