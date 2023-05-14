@@ -3,12 +3,16 @@ server:
 
 spring:
   profiles:
-    active: prod
+    default: prod
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:5432/news_management_service?ApplicationName=TestSweetApp
+    url: jdbc:postgresql://localhost:5432/news_management_service?applicationName=TestSweetApp
     username: postgres
     password: 12378
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
   liquibase:
     enabled: true
     change-log: db/changelog/db.changelog-master.yaml
