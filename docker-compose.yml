@@ -8,7 +8,10 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: 12378
     ports:
-      - "5432:5432"
+      - "5433:5432"
+    networks:
+      - my_net
+
   pgadmin:
     build: pgadmin
     image: news_management_pgadmin:1.0.0
@@ -18,6 +21,20 @@ services:
       PGADMIN_DEFAULT_PASSWORD: root
     ports:
       - "82:80"
+    networks:
+      - my_net
+
   news-management-service:
-    build: news-management-service
+    build: news_management_service
     image: news_management_service:1.0.0
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+    networks:
+      - my_net
+
+networks:
+  my_net:
+    name: my_net
+
