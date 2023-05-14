@@ -1,8 +1,6 @@
 FROM eclipse-temurin:17-alpine
-MAINTAINER Sleetfire
+LABEL MAINTAINER = "Sleetfire"
 
-ADD ./build/libs/news_management_service-0.0.1-SNAPSHOT.jar /app/
+COPY ./build/libs/news_management_service-0.0.1-SNAPSHOT.jar app-1.0.0.jar
 
-CMD ["java", "-Xmx200m", "-jar", "/app/news_management_service-0.0.1-SNAPSHOT.jar"]
-
-EXPOSE 8080 8089
+ENTRYPOINT [ "java", "-jar", "app-1.0.0.jar" ]
