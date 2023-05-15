@@ -42,6 +42,16 @@ services:
     networks:
       - my_net
 
+  cache:
+    image: "redis:latest"
+    ports:
+      - "6379:6379"
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+      - REDIS_DISABLE_COMMANDS=FLUSHDB,FLUSHALL
+    networks:
+      - my_net
+
 networks:
   my_net:
     name: my_net
