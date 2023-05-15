@@ -22,6 +22,8 @@ tags:
     description: "Опубликованные новости"
   - name: "Комментарии"
     description: "Комментарии, оставляемые под новостями"
+  - name : "Поиск"
+    description: "Поиск новостей и комментариев"
 
 paths:
   /news:
@@ -56,13 +58,15 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/PageOfNews'
+                $ref: '#/components/schemas/ListOfNews'
         '400':
           $ref: '#/components/responses/Bad_Request'
         '401':
           $ref: '#/components/responses/Unauthorized'
         '403':
           $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/Not_Found'
         '500':
           $ref: '#/components/responses/Internal_Server_Error'
   /news/{id}:
@@ -91,6 +95,8 @@ paths:
           $ref: '#/components/responses/Unauthorized'
         '403':
           $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/Not_Found'
         '500':
           $ref: '#/components/responses/Internal_Server_Error'
     patch:
@@ -120,6 +126,8 @@ paths:
           $ref: '#/components/responses/Unauthorized'
         '403':
           $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/Not_Found'
         '500':
           $ref: '#/components/responses/Internal_Server_Error'
     delete:
@@ -143,6 +151,8 @@ paths:
           $ref: '#/components/responses/Unauthorized'
         '403':
           $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/Not_Found'
         '500':
           $ref: '#/components/responses/Internal_Server_Error'
   /news/page:
@@ -176,6 +186,8 @@ paths:
           $ref: '#/components/responses/Unauthorized'
         '403':
           $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/Not_Found'
         '500':
           $ref: '#/components/responses/Internal_Server_Error'
   /news/{id}/comments/wrapper:
@@ -216,79 +228,109 @@ paths:
           $ref: '#/components/responses/Unauthorized'
         '403':
           $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/Not_Found'
         '500':
           $ref: '#/components/responses/Internal_Server_Error'
-  /api/v1/account/{uuid}/dt_update/{dt_update}:
-    put:
-      tags:
-        - "Счета"
-      summary: Редактировать информацию о счёте
-      parameters:
-        - in: path
-          name: uuid
-          description: Идентификатор счёта в котором создаём операцию
-          required: true
-          schema:
-            type: string
-            format: uuid
-        - in: path
-          name: dt_update
-          required: true
-          schema:
-            type: string
-            format: int64
-          description: Дата последнего обновления записи
-      requestBody:
-        $ref: "#/components/requestBodies/CreateAccount"
-      responses:
-        '200':
-          description: "Счёт обновлён"
-        '400':
-          $ref: '#/components/responses/Bad_Request'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '403':
-          $ref: '#/components/responses/Forbidden'
-        '500':
-          $ref: '#/components/responses/Internal_Server_Error'
-  /api/v1/account/{uuid}/operation:
+  /news/{newsId}/comments:
     post:
       tags:
-        - "Операции"
-      summary: Добавление операции по счёту
+        - "Комментарии"
+      summary: "Добавление комментария к новости"
       parameters:
         - in: path
-          name: uuid
-          description: Идентификатор счёта в котором создаём операцию
+          name: newsId
+          description: "Идентификатор новости"
           required: true
           schema:
-            type: string
-            format: uuid
+            type: integer
+            format: int64
       requestBody:
-        $ref: "#/components/requestBodies/CreateOperation"
+        $ref: "#/components/requestBodies/CreateComment"
       responses:
         '201':
-          description: "Операция добавлена к счёту"
+          description: "Комментарий добавлен"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Comment'
         '400':
           $ref: '#/components/responses/Bad_Request'
         '401':
           $ref: '#/components/responses/Unauthorized'
         '403':
           $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/Not_Found'
         '500':
           $ref: '#/components/responses/Internal_Server_Error'
     get:
       tags:
-        - "Операции"
-      summary: Получить страницу операций по счёту
+        - "Комментарии"
+      summary: "Получение списка новостей по идентификатору новости"
       parameters:
         - in: path
-          name: uuid
-          description: "Идентификатор счёта по которому получаем операции"
+          name: newsId
+          description: "Идентификатор новости"
           required: true
           schema:
-            type: string
-            format: uuid
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListOfComment'
+        '400':
+          $ref: '#/components/responses/Bad_Request'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/Not_Found'
+        '500':
+          $ref: '#/components/responses/Internal_Server_Error'
+    delete:
+      tags:
+        - "Комментарии"
+      summary: "Удаление всех комментариев по идентификатору новости"
+      parameters:
+        - in: path
+          name: newsId
+          description: "Идентификатор новости"
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '204':
+          description: NO CONTENT
+        '400':
+          $ref: '#/components/responses/Bad_Request'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/Not_Found'
+        '500':
+          $ref: '#/components/responses/Internal_Server_Error'
+  /news/{newsId}/comments/page:
+    get:
+      tags:
+        - "Комментарии"
+      summary: "Получение страницы комментариев по идентификатору новости"
+      parameters:
+        - in: path
+          name: newsId
+          description: "Идентификатор новости"
+          required: true
+          schema:
+            type: integer
+            format: int64
         - in: query
           name: page
           schema:
@@ -307,90 +349,266 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/PageOfOperation'
+                $ref: '#/components/schemas/PageOfComments'
         '400':
           $ref: '#/components/responses/Bad_Request'
         '401':
           $ref: '#/components/responses/Unauthorized'
         '403':
           $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/Not_Found'
         '500':
           $ref: '#/components/responses/Internal_Server_Error'
-  /api/v1/account/{uuid}/operation/{uuid_operation}/dt_update/{dt_update}:
-    put:
+  /news/comments:
+    get:
       tags:
-        - "Операции"
-      summary: Редактировать информацию об операции на счёте
-      parameters:
-        - in: path
-          name: uuid
-          description: Идентификатор счёта в котором редактируем операцию
-          required: true
-          schema:
-            type: string
-            format: uuid
-        - in: path
-          name: uuid_operation
-          description: Идентификатор операции в котором редактируем
-          required: true
-          schema:
-            type: string
-            format: uuid
-        - in: path
-          name: dt_update
-          required: true
-          schema:
-            type: string
-            format: int64
-          description: Дата последнего обновления записи
-      requestBody:
-        $ref: "#/components/requestBodies/CreateOperation"
+        - "Комментарии"
+      summary: "Получение списка всех комментариев"
       responses:
         '200':
-          description: "Операция изменена"
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListOfComment'
         '400':
           $ref: '#/components/responses/Bad_Request'
         '401':
           $ref: '#/components/responses/Unauthorized'
         '403':
           $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/Not_Found'
+        '500':
+          $ref: '#/components/responses/Internal_Server_Error'
+  /news/comments/{id}:
+    get:
+      tags:
+        - "Комментарии"
+      summary: "Получение комментария по идентификатору"
+      parameters:
+        - in: path
+          name: id
+          description: "Идентификатор комментария"
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Comment'
+        '400':
+          $ref: '#/components/responses/Bad_Request'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/Not_Found'
+        '500':
+          $ref: '#/components/responses/Internal_Server_Error'
+    patch:
+      tags:
+        - "Комментарии"
+      summary: "Обновление комментария"
+      parameters:
+        - in: path
+          name: id
+          description: "Идентификатор комментария"
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Comment'
+        '400':
+          $ref: '#/components/responses/Bad_Request'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/Not_Found'
         '500':
           $ref: '#/components/responses/Internal_Server_Error'
     delete:
       tags:
-        - "Операции"
-      summary: Удалить операцию на счёте
+        - "Комментарии"
+      summary: "Удаление комментария по идентификатору"
       parameters:
         - in: path
-          name: uuid
-          description: Идентификатор счёта в котором редактируем операцию
+          name: id
+          description: "Идентификатор комментария"
           required: true
           schema:
-            type: string
-            format: uuid
-        - in: path
-          name: uuid_operation
-          description: Идентификатор операции в котором редактируем
-          required: true
-          schema:
-            type: string
-            format: uuid
-        - in: path
-          name: dt_update
-          required: true
-          schema:
-            type: string
+            type: integer
             format: int64
-          description: Дата последнего обновления записи
       responses:
-        '200':
-          description: "Операция удалена"
+        '204':
+          description: NO CONTENT
         '400':
           $ref: '#/components/responses/Bad_Request'
         '401':
           $ref: '#/components/responses/Unauthorized'
         '403':
           $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/Not_Found'
+        '500':
+          $ref: '#/components/responses/Internal_Server_Error'
+  /search/:
+    get:
+      tags:
+        - "Поиск"
+      summary: "Полнотекстовый поиск списка новостей с относящимся к ним списком комментариев"
+      parameters:
+        - in: query
+          name: text
+          schema:
+            type: string
+          description: Текст для поиска
+          required: false
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListOfNewsCommentsWrapper'
+        '400':
+          $ref: '#/components/responses/Bad_Request'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/Not_Found'
+        '500':
+          $ref: '#/components/responses/Internal_Server_Error'
+  /search/news:
+    get:
+      tags:
+        - "Поиск"
+      summary: "Полнотекстовый поиск списка новостей"
+      parameters:
+        - in: query
+          name: text
+          schema:
+            type: string
+          description: Текст для поиска
+          required: false
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListOfNews'
+        '400':
+          $ref: '#/components/responses/Bad_Request'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/Not_Found'
+        '500':
+          $ref: '#/components/responses/Internal_Server_Error'
+  /search/news/page:
+    get:
+      tags:
+        - "Поиск"
+      summary: "Полнотекстовый поиск страницы новостей"
+      parameters:
+        - in: query
+          name: text
+          schema:
+            type: string
+          description: Текст для поиска
+          required: false
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PageOfNews'
+        '400':
+          $ref: '#/components/responses/Bad_Request'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/Not_Found'
+        '500':
+          $ref: '#/components/responses/Internal_Server_Error'
+  /search/comments:
+    get:
+      tags:
+        - "Поиск"
+      summary: "Полнотекстовый списка комментариев"
+      parameters:
+        - in: query
+          name: text
+          schema:
+            type: string
+          description: Текст для поиска
+          required: false
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListOfComment'
+        '400':
+          $ref: '#/components/responses/Bad_Request'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/Not_Found'
+        '500':
+          $ref: '#/components/responses/Internal_Server_Error'
+  /search/comments/page:
+    get:
+      tags:
+        - "Поиск"
+      summary: "Полнотекстовый страницы комментариев"
+      parameters:
+        - in: query
+          name: text
+          schema:
+            type: string
+          description: Текст для поиска
+          required: false
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PageOfComments'
+        '400':
+          $ref: '#/components/responses/Bad_Request'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/Not_Found'
         '500':
           $ref: '#/components/responses/Internal_Server_Error'
 
@@ -437,6 +655,17 @@ components:
       description: Для выполнения запроса на данный адрес требуется передать токен авторизации
     Forbidden:
       description: Данному токенту авторизации запрещено выполнять запрос на данный адрес
+    Not_Found:
+      description: Сервер не может найти запрашиваемый ресурс
+      content:
+        applicaion/json:
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/t_single_error_response'
+          example:
+            - logref: error
+              message:  Запрос содержит некорректные данные. Измените запрос и отправьте его ещё раз
     Internal_Server_Error:
       description: Внутренняя ошибка сервера. Сервер не смог корректно обработать запрос
       content:
@@ -558,6 +787,10 @@ components:
           type: object
           allOf:
             - $ref: '#/components/schemas/PageOfComments'
+    ListOfNewsCommentsWrapper:
+      type: array
+      items:
+        $ref: '#/components/schemas/NewsCommentsWrapper'
     t_page:
       type: object
       required:
