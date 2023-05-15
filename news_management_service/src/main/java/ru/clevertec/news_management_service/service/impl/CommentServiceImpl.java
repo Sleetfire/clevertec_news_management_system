@@ -60,10 +60,8 @@ public class CommentServiceImpl implements CommentService {
     @Cacheable(value = "comments", key = "#id")
     public CommentDto findById(long id) {
         Optional<Comment> optionalComment = commentRepository.findById(id);
-        if (optionalComment.isEmpty()) {
-            throw new EntityNotFoundException(COMMENT_NOT_FOUND_MESSAGE);
-        }
-        return commentMapper.toDto(optionalComment.get());
+        Comment comment = optionalComment.orElseThrow(() -> new EntityNotFoundException(COMMENT_NOT_FOUND_MESSAGE));
+        return commentMapper.toDto(comment);
     }
 
     @Override

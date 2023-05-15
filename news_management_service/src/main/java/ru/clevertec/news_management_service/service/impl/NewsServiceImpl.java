@@ -56,10 +56,8 @@ public class NewsServiceImpl implements NewsService {
     @Cacheable(value = "news", key = "#id")
     public NewsDto findById(long id) {
         Optional<News> optionalNews = newsRepository.findById(id);
-        if (optionalNews.isEmpty()) {
-            throw new EntityNotFoundException(NEWS_NOT_FOUND_MESSAGE);
-        }
-        return newsMapper.toDto(optionalNews.get());
+        News news = optionalNews.orElseThrow(() -> new EntityNotFoundException(NEWS_NOT_FOUND_MESSAGE));
+        return newsMapper.toDto(news);
     }
 
     @Override
