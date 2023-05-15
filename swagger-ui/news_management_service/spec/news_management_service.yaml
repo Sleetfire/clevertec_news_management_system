@@ -51,7 +51,7 @@ paths:
     get:
       tags:
         - "Новости"
-      summary: "Получить список новостей"
+      summary: "Получение списка новостей"
       responses:
         '200':
           description: OK
@@ -73,7 +73,7 @@ paths:
     get:
       tags:
         - "Новости"
-      summary: "Получить новость по идентификатору"
+      summary: "Получение новости по идентификатору"
       parameters:
         - in: path
           name: id
@@ -102,7 +102,7 @@ paths:
     patch:
       tags:
         - "Новости"
-      summary: "Обновить новость"
+      summary: "Обновление новости"
       requestBody:
         $ref: "#/components/requestBodies/CreateNews"
       parameters:
@@ -133,7 +133,7 @@ paths:
     delete:
       tags:
         - "Новости"
-      summary: "Удалить новость"
+      summary: "Удаление новости по идентификатору"
       parameters:
         - in: path
           name: id
