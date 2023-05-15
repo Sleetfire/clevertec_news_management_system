@@ -1,5 +1,8 @@
 package ru.clevertec.news_management_service.service.impl;
 
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -37,6 +40,7 @@ public class NewsServiceImpl implements NewsService {
 
     @Override
     @Loggable
+    @CachePut(value = "news", key = "#result.id")
     @Transactional
     public NewsDto create(CreateNewsDto news) {
         NewsDto newsDto = NewsDto.builder()
@@ -49,6 +53,7 @@ public class NewsServiceImpl implements NewsService {
     }
 
     @Override
+    @Cacheable(value = "news", key = "#id")
     public NewsDto findById(long id) {
         Optional<News> optionalNews = newsRepository.findById(id);
         if (optionalNews.isEmpty()) {
@@ -74,6 +79,7 @@ public class NewsServiceImpl implements NewsService {
 
     @Override
     @Loggable
+    @CachePut(value = "news", key = "#result.id")
     @Transactional
     public NewsDto update(long id, CreateNewsDto updatedNews) {
         Optional<News> newsOptional = newsRepository.findById(id);
@@ -101,6 +107,7 @@ public class NewsServiceImpl implements NewsService {
     @Override
     @Loggable
     @Transactional
+    @CacheEvict(value = "news", key = "#id")
     public void deleteById(long id) {
         Optional<News> optionalNews = newsRepository.findById(id);
         if (optionalNews.isEmpty()) {

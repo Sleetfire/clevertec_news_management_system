@@ -1,5 +1,8 @@
 package ru.clevertec.news_management_service.service.impl;
 
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -40,6 +43,7 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     @Loggable
+    @CachePut(value = "comments", key = "#result.id")
     @Transactional
     public CommentDto create(long newsId, CreateCommentDto comment) {
         CommentDto commentDto = CommentDto.builder()
@@ -53,6 +57,7 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
+    @Cacheable(value = "comments", key = "#id")
     public CommentDto findById(long id) {
         Optional<Comment> optionalComment = commentRepository.findById(id);
         if (optionalComment.isEmpty()) {
@@ -78,6 +83,7 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     @Loggable
+    @CachePut(value = "comments", key = "#result.id")
     @Transactional
     public CommentDto update(long id, CreateCommentDto updatedComment) {
         Optional<Comment> optionalComment = commentRepository.findById(id);
@@ -98,6 +104,7 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     @Loggable
+    @CacheEvict(value = "comments", key = "#id")
     @Transactional
     public void deleteById(long id) {
         Optional<Comment> optionalComment = commentRepository.findById(id);
