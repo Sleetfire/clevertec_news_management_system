@@ -20,6 +20,10 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
+import static ru.clevertec.news_management_service.service.util.Constants.COMMENT_LIST_NOT_FOUND_MESSAGE;
+import static ru.clevertec.news_management_service.service.util.Constants.COMMENT_NOT_FOUND_MESSAGE;
+import static ru.clevertec.news_management_service.service.util.Constants.COMMENT_PAGE_NOT_FOUND_MESSAGE;
+
 @Service
 @Transactional(readOnly = true, noRollbackForClassName = {"ru.clevertec.news_management_service.exception.EntityNotFoundException"})
 public class CommentServiceImpl implements CommentService {
@@ -52,7 +56,7 @@ public class CommentServiceImpl implements CommentService {
     public CommentDto findById(long id) {
         Optional<Comment> optionalComment = commentRepository.findById(id);
         if (optionalComment.isEmpty()) {
-            throw new EntityNotFoundException();
+            throw new EntityNotFoundException(COMMENT_NOT_FOUND_MESSAGE);
         }
         return commentMapper.toDto(optionalComment.get());
     }
@@ -61,7 +65,7 @@ public class CommentServiceImpl implements CommentService {
     public List<CommentDto> findAll() {
         List<Comment> commentList = commentRepository.findAll();
         if (commentList.isEmpty()) {
-            throw new EntityNotFoundException();
+            throw new EntityNotFoundException(COMMENT_LIST_NOT_FOUND_MESSAGE);
         }
         return commentMapper.toDto(commentList);
     }
@@ -78,7 +82,7 @@ public class CommentServiceImpl implements CommentService {
     public CommentDto update(long id, CreateCommentDto updatedComment) {
         Optional<Comment> optionalComment = commentRepository.findById(id);
         if (optionalComment.isEmpty()) {
-            throw new EntityNotFoundException();
+            throw new EntityNotFoundException(COMMENT_NOT_FOUND_MESSAGE);
         }
 
         Comment commentFromDb = optionalComment.get();
@@ -98,7 +102,7 @@ public class CommentServiceImpl implements CommentService {
     public void deleteById(long id) {
         Optional<Comment> optionalComment = commentRepository.findById(id);
         if (optionalComment.isEmpty()) {
-            throw new EntityNotFoundException();
+            throw new EntityNotFoundException(COMMENT_NOT_FOUND_MESSAGE);
         }
         commentRepository.deleteById(id);
     }
@@ -107,7 +111,7 @@ public class CommentServiceImpl implements CommentService {
     public List<CommentDto> findAllByNewsId(long id) {
         List<Comment> commentList = commentRepository.findAllByNewsId(id);
         if (commentList.isEmpty()) {
-            throw new EntityNotFoundException();
+            throw new EntityNotFoundException(COMMENT_LIST_NOT_FOUND_MESSAGE);
         }
         return commentMapper.toDto(commentList);
     }
@@ -135,7 +139,7 @@ public class CommentServiceImpl implements CommentService {
 
     private PageDto<CommentDto> convertPage(Page<Comment> page) {
         if (page.isEmpty()) {
-            throw new EntityNotFoundException();
+            throw new EntityNotFoundException(COMMENT_PAGE_NOT_FOUND_MESSAGE);
         }
         return PageDto.Builder.createBuilder(CommentDto.class)
                 .setNumber(page.getNumber())

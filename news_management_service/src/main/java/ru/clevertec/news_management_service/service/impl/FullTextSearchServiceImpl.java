@@ -17,6 +17,10 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static ru.clevertec.news_management_service.service.util.Constants.COMMENT_LIST_NOT_FOUND_MESSAGE;
+import static ru.clevertec.news_management_service.service.util.Constants.ENTITY_NOT_FOUND_MESSAGE;
+import static ru.clevertec.news_management_service.service.util.Constants.NEWS_LIST_NOT_FOUND_MESSAGE;
+
 @Service
 @Transactional(readOnly = true)
 public class FullTextSearchServiceImpl implements FullTextSearchService {
@@ -55,7 +59,7 @@ public class FullTextSearchServiceImpl implements FullTextSearchService {
         });
 
         if (result.isEmpty()) {
-            throw new EntityNotFoundException();
+            throw new EntityNotFoundException(ENTITY_NOT_FOUND_MESSAGE);
         }
 
         return result;
@@ -65,7 +69,7 @@ public class FullTextSearchServiceImpl implements FullTextSearchService {
     public List<NewsDto> findNewsList(String text) {
         List<NewsDto> newsDtoList = newsServiceImpl.findAllByWordParts(text);
         if(newsDtoList.isEmpty()) {
-            throw new EntityNotFoundException();
+            throw new EntityNotFoundException(NEWS_LIST_NOT_FOUND_MESSAGE);
         }
         return newsDtoList;
     }
@@ -74,7 +78,7 @@ public class FullTextSearchServiceImpl implements FullTextSearchService {
     public List<CommentDto> findCommentList(String text) {
         List<CommentDto> commentDtoList = commentServiceImpl.findAllByWordParts(text);
         if (commentDtoList.isEmpty()) {
-            throw new EntityNotFoundException();
+            throw new EntityNotFoundException(COMMENT_LIST_NOT_FOUND_MESSAGE);
         }
         return commentDtoList;
     }

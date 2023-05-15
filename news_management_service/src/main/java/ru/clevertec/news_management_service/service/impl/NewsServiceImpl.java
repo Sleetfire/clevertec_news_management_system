@@ -19,6 +19,10 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
+import static ru.clevertec.news_management_service.service.util.Constants.NEWS_LIST_NOT_FOUND_MESSAGE;
+import static ru.clevertec.news_management_service.service.util.Constants.NEWS_NOT_FOUND_MESSAGE;
+import static ru.clevertec.news_management_service.service.util.Constants.NEWS_PAGE_NOT_FOUND_MESSAGE;
+
 @Service
 @Transactional(readOnly = true)
 public class NewsServiceImpl implements NewsService {
@@ -48,7 +52,7 @@ public class NewsServiceImpl implements NewsService {
     public NewsDto findById(long id) {
         Optional<News> optionalNews = newsRepository.findById(id);
         if (optionalNews.isEmpty()) {
-            throw new EntityNotFoundException();
+            throw new EntityNotFoundException(NEWS_NOT_FOUND_MESSAGE);
         }
         return newsMapper.toDto(optionalNews.get());
     }
@@ -57,7 +61,7 @@ public class NewsServiceImpl implements NewsService {
     public List<NewsDto> findAll() {
         List<News> newsList = newsRepository.findAll();
         if (newsList.isEmpty()) {
-            throw new EntityNotFoundException();
+            throw new EntityNotFoundException(NEWS_LIST_NOT_FOUND_MESSAGE);
         }
         return newsMapper.toDto(newsList);
     }
@@ -74,7 +78,7 @@ public class NewsServiceImpl implements NewsService {
     public NewsDto update(long id, CreateNewsDto updatedNews) {
         Optional<News> newsOptional = newsRepository.findById(id);
         if (newsOptional.isEmpty()) {
-            throw new EntityNotFoundException();
+            throw new EntityNotFoundException(NEWS_NOT_FOUND_MESSAGE);
         }
 
         News newsFromDb = newsOptional.get();
@@ -100,7 +104,7 @@ public class NewsServiceImpl implements NewsService {
     public void deleteById(long id) {
         Optional<News> optionalNews = newsRepository.findById(id);
         if (optionalNews.isEmpty()) {
-            throw new EntityNotFoundException();
+            throw new EntityNotFoundException(NEWS_NOT_FOUND_MESSAGE);
         }
 
         newsRepository.deleteById(id);
@@ -122,7 +126,7 @@ public class NewsServiceImpl implements NewsService {
 
     private PageDto<NewsDto> convertPage(Page<News> page) {
         if (page.isEmpty()) {
-            throw new EntityNotFoundException();
+            throw new EntityNotFoundException(NEWS_PAGE_NOT_FOUND_MESSAGE);
         }
         return PageDto.Builder.createBuilder(NewsDto.class)
                 .setNumber(page.getNumber())
