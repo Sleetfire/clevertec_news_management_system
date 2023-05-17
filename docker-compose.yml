@@ -35,12 +35,14 @@ services:
       - my_net
 
   swagger-ui:
-    build: swagger-ui
-    image: news_management_service:1.0.0
+    image: swaggerapi/swagger-ui
+    container_name: swagger_ui_container
     ports:
       - "81:8080"
-    networks:
-      - my_net
+    volumes:
+      - ./doc:/usr/share/nginx/html/doc/swagger-ui/news_management_service/spec
+    environment:
+      API_URL: swagger-ui/news_management_service/spec/news_management_service.yaml
 
   cache:
     image: "redis:latest"
