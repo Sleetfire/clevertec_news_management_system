@@ -24,7 +24,7 @@ import java.util.List;
 import static ru.clevertec.news_management_service.controller.util.ControllerUtil.*;
 
 @RestController
-@RequestMapping("/news")
+@RequestMapping("/api/v1/news")
 public class CommentController {
 
     private final CommentService commentService;

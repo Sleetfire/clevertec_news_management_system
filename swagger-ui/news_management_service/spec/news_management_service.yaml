@@ -26,7 +26,7 @@ tags:
     description: "Поиск новостей и комментариев"
 
 paths:
-  /news:
+  /api/v1/news:
     post:
       tags:
         - "Новости"
@@ -69,7 +69,7 @@ paths:
           $ref: '#/components/responses/Not_Found'
         '500':
           $ref: '#/components/responses/Internal_Server_Error'
-  /news/{id}:
+  /api/v1/news/{id}:
     get:
       tags:
         - "Новости"
@@ -155,7 +155,7 @@ paths:
           $ref: '#/components/responses/Not_Found'
         '500':
           $ref: '#/components/responses/Internal_Server_Error'
-  /news/page:
+  /api/v1/news/page:
     get:
       tags:
         - "Новости"
@@ -190,7 +190,7 @@ paths:
           $ref: '#/components/responses/Not_Found'
         '500':
           $ref: '#/components/responses/Internal_Server_Error'
-  /news/{id}/comments/wrapper:
+  /api/v1/news/{id}/comments/wrapper:
     get:
       tags:
         - "Новости"
@@ -232,7 +232,7 @@ paths:
           $ref: '#/components/responses/Not_Found'
         '500':
           $ref: '#/components/responses/Internal_Server_Error'
-  /news/{newsId}/comments:
+  /api/v1/news/{newsId}/comments:
     post:
       tags:
         - "Комментарии"
@@ -318,7 +318,7 @@ paths:
           $ref: '#/components/responses/Not_Found'
         '500':
           $ref: '#/components/responses/Internal_Server_Error'
-  /news/{newsId}/comments/page:
+  /api/v1/news/{newsId}/comments/page:
     get:
       tags:
         - "Комментарии"
@@ -360,7 +360,7 @@ paths:
           $ref: '#/components/responses/Not_Found'
         '500':
           $ref: '#/components/responses/Internal_Server_Error'
-  /news/comments:
+  /api/v1/news/comments:
     get:
       tags:
         - "Комментарии"
@@ -382,7 +382,7 @@ paths:
           $ref: '#/components/responses/Not_Found'
         '500':
           $ref: '#/components/responses/Internal_Server_Error'
-  /news/comments/{id}:
+  /api/v1/news/comments/{id}:
     get:
       tags:
         - "Комментарии"
@@ -466,7 +466,7 @@ paths:
           $ref: '#/components/responses/Not_Found'
         '500':
           $ref: '#/components/responses/Internal_Server_Error'
-  /search/:
+  /api/v1/search/:
     get:
       tags:
         - "Поиск"
@@ -495,7 +495,7 @@ paths:
           $ref: '#/components/responses/Not_Found'
         '500':
           $ref: '#/components/responses/Internal_Server_Error'
-  /search/news:
+  /api/v1/search/news:
     get:
       tags:
         - "Поиск"
@@ -524,7 +524,7 @@ paths:
           $ref: '#/components/responses/Not_Found'
         '500':
           $ref: '#/components/responses/Internal_Server_Error'
-  /search/news/page:
+  /api/v1/search/news/page:
     get:
       tags:
         - "Поиск"
@@ -553,7 +553,7 @@ paths:
           $ref: '#/components/responses/Not_Found'
         '500':
           $ref: '#/components/responses/Internal_Server_Error'
-  /search/comments:
+  /api/v1/search/comments:
     get:
       tags:
         - "Поиск"
@@ -582,7 +582,7 @@ paths:
           $ref: '#/components/responses/Not_Found'
         '500':
           $ref: '#/components/responses/Internal_Server_Error'
-  /search/comments/page:
+  /api/v1/search/comments/page:
     get:
       tags:
         - "Поиск"
@@ -643,11 +643,11 @@ components:
           examples:
             t_single_error_response:
               value:
-                - logref: error
+                - logRef: error
                   message:  Запрос содержит некорретные данные. Измените запрос и отправьте его ещё раз
             t_multiple_error_response:
               value:
-                logref: structured_error
+                logRef: structured_error
                 errors:
                   - field: time_unit
                     message: Поле должно быть положительным числом
@@ -658,24 +658,24 @@ components:
     Not_Found:
       description: Сервер не может найти запрашиваемый ресурс
       content:
-        applicaion/json:
+        application/json:
           schema:
             type: array
             items:
               $ref: '#/components/schemas/t_single_error_response'
           example:
-            - logref: error
+            - logRef: error
               message:  Запрос содержит некорректные данные. Измените запрос и отправьте его ещё раз
     Internal_Server_Error:
       description: Внутренняя ошибка сервера. Сервер не смог корректно обработать запрос
       content:
-        applicaion/json:
+        application/json:
           schema:
             type: array
             items:
               $ref: '#/components/schemas/t_single_error_response'
           example:
-            - logref: error
+            - logRef: error
               message:  Сервер не смог корректно обработать запрос. Пожалуйста обратитесь к администратору
   schemas:
     CreateNews:

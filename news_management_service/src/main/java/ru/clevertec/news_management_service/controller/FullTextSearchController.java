@@ -19,7 +19,7 @@ import java.util.List;
 import static ru.clevertec.news_management_service.controller.util.ControllerUtil.*;
 
 @RestController
-@RequestMapping(value = "/search")
+@RequestMapping(value = "/api/v1/search")
 public class FullTextSearchController {
 
     private final FullTextSearchService fullTextSearchServiceImpl;
