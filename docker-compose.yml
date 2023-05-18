@@ -29,6 +29,10 @@ services:
     image: news_management_service:1.0.0
     ports:
       - "8080:8080"
+    environment:
+      POSTGRES_HOST: db
+      POSTGRES_PORT: 5433
+      POSTGRES_DB: news_management_service
     depends_on:
       - db
     networks:
