@@ -1,5 +1,6 @@
 package ru.clevertec.news_management_service.integration.service.impl;
 
+import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -22,6 +23,9 @@ class NewsServiceAdvanceImplTest extends BaseIntegrationTest {
 
     @Autowired
     private NewsServiceAdvanceImpl newsServiceAdvanceImpl;
+
+    @Autowired
+    private EntityManager entityManager;
 
     @Test
     void checkCreateShouldReturnCreatedNewsDto() {
@@ -75,6 +79,7 @@ class NewsServiceAdvanceImplTest extends BaseIntegrationTest {
         long id = 2L;
 
         newsServiceAdvanceImpl.deleteById(id);
+        entityManager.flush();
 
         assertThatThrownBy(() -> newsServiceAdvanceImpl.findById(id))
                 .isInstanceOf(EntityNotFoundException.class);

@@ -1,5 +1,6 @@
 package ru.clevertec.news_management_service.integration.service.impl;
 
+import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -21,6 +22,9 @@ class CommentServiceImplTest extends BaseIntegrationTest {
 
     @Autowired
     private CommentServiceImpl commentServiceImpl;
+
+    @Autowired
+    private EntityManager entityManager;
 
     @Test
     void checkCreateShouldReturnCreatedComment() {
@@ -78,6 +82,7 @@ class CommentServiceImplTest extends BaseIntegrationTest {
         long id = 1L;
 
         commentServiceImpl.deleteById(id);
+        entityManager.flush();
 
         assertThatThrownBy(() -> commentServiceImpl.findById(id))
                 .isInstanceOf(EntityNotFoundException.class);
@@ -98,6 +103,7 @@ class CommentServiceImplTest extends BaseIntegrationTest {
         long newsId = 1L;
 
         commentServiceImpl.deleteAllByNewsId(newsId);
+        entityManager.flush();
 
         assertThatThrownBy(() -> commentServiceImpl.findAllByNewsId(newsId))
                 .isInstanceOf(EntityNotFoundException.class);
